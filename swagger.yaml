@@ -1,0 +1,146 @@
+swagger: "2.0"
+info:
+  description: "This is an API spec for the Qntfy NER analytic.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters."
+  version: "0.0.1"
+  title: "Qntfy NER analytic"
+  # termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "max@qntfy.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+# host: "petstore.swagger.io"
+basePath: "/api/v1"
+tags:
+- name: "cdr"
+  description: "API methods for dealing with the CDR schema"
+  externalDocs:
+    description: "CDR schema"
+    url: "https://github.com/reynoldsm88/Document-Schema"
+- name: "annotate"
+  description: "API methods for dealing with text inputs"
+- name: "health"
+  description: "API methods for interrogating status of the server"
+schemes:
+- "https"
+- "http"
+paths:
+  /annotate/cdr:
+    post:
+      tags:
+      - "cdr"
+      - "annotate"
+      summary: "Annotate a CDR document"
+      description: "Uses the `extracted_text` field of a CDR document for NER tagging"
+      operationId: "cdrAnnotate"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "CDR JSON object to annotate"
+        required: true
+        schema:
+          $ref: "#/definitions/CdrDocument"
+      responses:
+        200:
+          description: "Ran over input CDR successfully"
+          schema:
+            $ref: "#/definitions/OffsetTagAnnotation"
+        400:
+          description: "Did not follow schema appropriately"
+        500:
+          description: "An internal error occurred while processing (e.g. out of memory)"
+  /annotate:
+    post:
+      tags:
+      - "annotate"
+      summary: "Annotate a simple document"
+      description: "Uses the `text` field of a JSON object for NER tagging"
+      operationId: "annotate"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "TextInput JSON object to annotate"
+        required: true
+        schema:
+          $ref: "#/definitions/TextInput"
+      responses:
+        200:
+          description: "ran over inputs successfully"
+          schema:
+            $ref: "#/definitions/OffsetTagAnnotation"
+        400:
+          description: "Did not follow input schema appropriately"
+        500:
+          description: "An internal error occurred while processing (e.g. out of memory)"
+  /health:
+    get:
+      tags:
+      - "health"
+      summary: "Returns status of server"
+      description: "Returns a tuple of `health` to status"
+      operationId: "health"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "server is healthy"
+          schema:
+            $ref: "#/definitions/Health"
+        500:
+          description: "server is not healthy"
+          schema:
+            type: "object"
+            required:
+              - "status"
+            properties:
+              status:
+                type: "string"
+                example: "failed to load model"
+                description: "error message causing unhealthy status"
+definitions:
+  CdrDocument:
+    $ref: "https://raw.githubusercontent.com/WorldModelers/Document-Schema/master/cdr-schema/cdr-v2.json"
+  OffsetTagAnnotation:
+    $ref: "https://raw.githubusercontent.com/WorldModelers/Document-Schema/master/cdr-schema/cdr-v2.json#/definitions/offset-tag-annotation"
+  TextInput:
+    type: "object"
+    required:
+    - "text"
+    properties:
+      text:
+        type: "string"
+        example: "Greg went to the store to buy his dog, Spark, a new toy"
+        description: "Document text to annotate"
+    xml:
+      name: "TextInput"
+  Health:
+    type: "object"
+    required:
+    - "status"
+    properties:
+      status:
+        type: "string"
+        example: "healthy"
+        description: "Status of the server: `healthy` if OK, error message if not"
+    xml:
+      name: "TextInput"
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
