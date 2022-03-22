@@ -3,10 +3,6 @@
 Python-powered RESTful web service that provides event annotations on
 incoming CDR data.
 
-We've added postprocessing the tagged event text
-for more utility for CauseEx. See the list of categories and their
-associated words in `classes.py`.
-
 [Paper with description of the model](https://www.aclweb.org/anthology/D17-1035/).
 
 ## Swagger-rendered HTML documentation
@@ -151,4 +147,3 @@ step, which TwoSix is currently doing.
 
 The offsets also contain a `tag`, which is a description of the segment of text.
 
-We've added postprocessing the tagged event text for more utility for CauseEx. See the list of categories and their associated words in `classes.py`.
